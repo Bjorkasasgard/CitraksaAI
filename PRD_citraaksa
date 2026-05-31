@@ -1,0 +1,357 @@
+```markdown
+# Product Requirement Document (PRD) — Citraksa AI
+
+---
+
+## 1. Ringkasan Produk
+
+### 1.1 Nama Produk
+**Citraksa AI** — Asisten Legal & Kultural Pengrajin Nusantara
+
+### 1.2 Deskripsi Singkat
+Citraksa AI adalah aplikasi berbasis web yang memanfaatkan teknologi AI Multimodal untuk mengelola awal siklus pendaftaran Hak Kekayaan Intelektual (HAKI) bagi pengrajin. Sistem ini secara otomatis membedah elemen foto motif, merangkai narasi filosofis dari pengrajin, dan menghasilkan draf dokumen hukum resmi secara instan.
+
+### 1.3 Target Pengguna
+* Pengrajin tradisional (kain batik, tenun, anyaman)
+* Usaha Mikro, Kecil, dan Menengah (UMKM) sektor kriya seni
+* Seniman lokal independen
+* Dinas Koperasi & Pariwisata daerah (sebagai fasilitator pendamping)
+
+### 1.4 Tujuan Produk
+* Mendigitalkan dan mempermudah proses administrasi pendaftaran HAKI
+* Menghilangkan hambatan birokrasi dan biaya konsultan hukum
+* Mempercepat pembuatan dokumen legal bagi UMKM
+* Melestarikan narasi budaya lokal melalui pendokumentasian otomatis
+
+---
+
+## 2. User Persona & Role
+
+| Role | Deskripsi | Hak Akses Utama |
+| --- | --- | --- |
+| **Pengrajin (End-User)** | Pencipta karya yang membutuhkan dokumen HAKI | Input foto, input teks, unduh PDF |
+| **Admin Sistem** | Teknisi pengelola infrastruktur AI | Kelola *System Prompt*, pantau *log error* |
+| **Verifikator DJKI** | Pemeriksa akhir di instansi Kemenkumham | Menerima *output* dokumen terstandardisasi |
+
+---
+
+## 3. Ruang Lingkup & Fitur
+
+### 3.1 MVP (Minimum Viable Product)
+
+**A. Input Multimodal Pengguna**
+* Fitur unggah gambar motif (dukungan JPG/PNG, batas ukuran 5MB)
+* Kolom input teks *multiline* untuk cerita awal penciptaan motif
+* Formulir pengisian identitas singkat (Nama Lengkap, NIK, Domisili)
+
+**B. Pemrosesan Kecerdasan Buatan (AI Engine)**
+* Ekstraksi warna, pola, dan nilai visual gambar via Gemini Vision
+* Transformasi bahasa sehari-hari menjadi narasi kultural baku via NLP
+* Penarikan otomatis klausa hukum perlindungan merujuk UU No. 28/2014
+
+**C. Generator Dokumen Hukum**
+* Pemetaan *output* AI ke dalam *template* formulir Pendaftaran Ciptaan DJKI
+* Penyusunan *file* berekstensi PDF siap cetak secara seketika
+
+### 3.2 Fitur Lanjutan (v1.1+)
+
+**D. Ekspansi Fungsionalitas**
+* Integrasi antarmuka pemrograman (API) publik menuju portal e-HakCipta Kemenkumham
+* Penyematan Tanda Tangan Digital (TTE) e-Meterai untuk validitas berkas
+* Dukungan antarmuka aplikasi dalam multi-bahasa daerah
+
+---
+
+## 4. Alur Proses (Flow)
+
+**Siklus Pembuatan Dokumen Citraksa AI**
+`[Unggah Foto & Cerita] → [Validasi Kualitas Input] → [Pemrosesan AI Multimodal] → [Pratinjau Hasil] → [Input Data Diri] → [Generate PDF] → [Selesai]`
+
+---
+
+## 5. Spesifikasi Teknis
+
+### 5.1 Tech Stack (Rekomendasi)
+
+| Layer | Teknologi |
+| --- | --- |
+| **Frontend** | React.js dipadukan dengan Tailwind CSS |
+| **Backend** | Node.js menggunakan kerangka kerja Express.js |
+| **Kecerdasan Buatan** | Google AI Studio (API Model Gemini 1.5 Pro) |
+| **Pemrosesan Berkas** | Library `pdf-lib` untuk manipulasi dokumen |
+| **Lingkungan Server** | *Local* (Google Antigravity), *Production* (Google Cloud Run) |
+
+### 5.2 Kebutuhan Non-Fungsional
+
+| Parameter | Target |
+| --- | --- |
+| **Desain Aksesibilitas** | Utamakan tampilan responsif (*Mobile-first*) |
+| **Response Time** | Target durasi pemrosesan AI < 15 detik |
+| **Keamanan Data** | *Stateless* (*file* musnah setelah PDF terunduh) |
+
+---
+
+## 6. Struktur Skema Data Sementara
+
+Berbeda dengan sistem kompleks pada umumnya, arsitektur Citraksa AI mengutamakan pendekatan nir-database (*stateless*). Seluruh parameter diproses di dalam *RAM Backend* secara instan.
+
+| Properti Obyek | Keterangan |
+| --- | --- |
+| `payload_image` | Data *buffer* gambar yang akan dikirim ke *endpoint* Gemini |
+| `payload_story` | Kumpulan *string* teks deskriptif dari pengguna |
+| `result_cultural` | Variabel penampung narasi sejarah dari model AI |
+| `result_legal` | Variabel penampung argumentasi hukum dari model AI |
+| `user_meta` | Penampung identitas pencipta untuk injeksi PDF |
+
+---
+
+## 7. Desain UX/UI (Prinsip & Alur Layar)
+
+### 7.1 Prinsip Desain
+* **Mobile-first:** Tata letak (layout) dirancang menyerupai tampilan aplikasi *smartphone* (satu kolom memanjang ke bawah) untuk memudahkan pengrajin, namun tetap responsif (*stretching*) di layar desktop.
+* **Minimalis & Bersih:** Latar belakang putih/terang dengan kontras warna teks yang tinggi agar mudah dibaca oleh pengguna paruh baya.
+* **Bebas Distraksi:** Tidak ada *sidebar* atau *dropdown* menu yang rumit. Satu halaman hanya memiliki maksimal satu atau dua aksi utama (Tombol *Call to Action*).
+
+### 7.2 Struktur Layar (Wireframe Text)
+
+**Layar 1: Beranda (Landing Page)**
+* **Header:** Logo "Citraksa AI" di tengah atas.
+* **Hero Section:** Teks judul besar "Lindungi Karya Kriya Anda" beserta deskripsi singkat (1-2 kalimat).
+* **Komponen Aksi:** Satu tombol utama berukuran besar *"Mulai Daftarkan Karyamu"*.
+
+**Layar 2: Input Multimodal (Formulir Karya)**
+* **Header:** Tombol navigasi *"Kembali"* dan Judul Halaman *"Detail Karya"*.
+* **Komponen Gambar:** Kotak area *upload* berdesain *dashed-border*. Terdapat ikon kamera dan instruksi *"Ketuk untuk unggah / foto motif"*.
+* **Komponen Teks:** *Text-area* (maks 500 karakter) dengan *placeholder* penuntun: *"Contoh: Ini batik motif ombak, maknanya..."*.
+* **Komponen Aksi:** Tombol *"Analisis Karya"*.
+
+**Layar 3: State Pemrosesan (Loading Screen)**
+* **Visual:** Animasi indikator berputar (*spinner* atau animasi motif).
+* **Teks Informasi:** *"Sistem AI Citraksa sedang menyusun narasi filosofis dan landasan hukum karya Anda..."* (Mencegah pengguna menutup aplikasi saat menunggu).
+
+**Layar 4: Pratinjau & Finalisasi**
+* **Komponen Pratinjau:** *Card layout* (kotak bayangan) berisi teks hasil AI (Deskripsi Visual & Landasan Hukum). Teks bersifat *read-only* atau bisa diedit jika perlu.
+* **Komponen Data Diri:** Tiga *input field* berjejer ke bawah (Nama Lengkap, NIK, Alamat Domisili).
+* **Komponen Aksi:** Tombol utama *"Unduh Dokumen Hukum (PDF)"*.
+
+**Layar 5: Status Selesai**
+* **Visual:** Ikon centang hijau (Sukses).
+* **Teks:** *"Dokumen HAKI berhasil diunduh. Data sementara Anda telah dihapus dari sistem."*
+* **Komponen Aksi:** Tombol sekunder *"Kembali ke Beranda"*.
+
+---
+
+## 8. Keamanan & Kepatuhan
+
+### 8.1 Keamanan Sistem
+
+* Meniadakan retensi data guna menghindari kebocoran desain motif orisinal ke publik
+* Validasi berkas ketat mencegah injeksi ekstensi berbahaya pada modul pengunggah gambar
+* Isolasi kredensial (API Keys) secara *backend-only* menggunakan *environment variables*
+
+### 8.2 Kepatuhan Regulasi
+
+* Merujuk secara eksplisit pada Pasal 40 ayat (1) huruf j dan k pada **Undang-Undang No. 28 Tahun 2014 tentang Hak Cipta**
+* Menyesuaikan lekstur dokumen dengan standar Peraturan Dirjen Kekayaan Intelektual
+
+---
+
+## 9. Metrik Keberhasilan (KPI)
+
+| Metrik | Target | Cara Ukur |
+| --- | --- | --- |
+| Pemangkasan Waktu | Berkurang 95% dibanding sistem pendaftaran konservatif | Pengukuran titik mulai klik hingga PDF rampung |
+| Akurasi Legal AI | ≥ 98% terhindar dari bias atau halusinasi teks | Pengecekan sampel silang hasil dokumen |
+| Skor Aksesibilitas | Lulus parameter audit UI untuk pengguna paruh baya | Sistem pengukuran Lighthouse (Aksesibilitas) |
+
+---
+
+## 10. Risiko & Mitigasi
+
+| Risiko | Dampak | Mitigasi |
+| --- | --- | --- |
+| Kegagalan API AI | Kritis | Penyiapan teks galat ramah pengguna & penanda *fallback* |
+| Input foto buram | Sedang | Pembuatan panduan kontras cahaya prapengunggahan berkas |
+| Halusinasi model | Tinggi | Mengurung AI dalam parameter *system prompt* yang sangat kaku |
+
+---
+
+## 11. Diagram Arsitektur & Alur Sistem
+
+### 11.1 High-Level Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph "Sisi Klien (Pengguna)"
+        A1[Peramban Web Seluler]
+        A2[Peramban Web Desktop]
+    end
+
+    subgraph "Arsitektur Layanan (Google Cloud Run)"
+        B1[Frontend UI - React.js]
+        B2[Backend API - Express.js]
+        B3[Modul Pembuat Berkas PDF]
+    end
+
+    subgraph "Kecerdasan Buatan Terintegrasi"
+        C1[Gerbang API Google AI Studio]
+        C2[Model Ekstraksi Visual]
+        C3[Model Transformasi Linguistik]
+    end
+
+    A1 -->|Kirim Gambar & Teks| B1
+    A2 -->|Kirim Gambar & Teks| B1
+    B1 -->|Teruskan Payload| B2
+    
+    B2 -->|Kueri Analisis Multimodal| C1
+    C1 --> C2
+    C1 --> C3
+    C1 -->|Kembalikan Narasi Hukum| B2
+    
+    B2 -->|Suntikkan Variabel| B3
+    B3 -->|Dokumen HAKI Final| B1
+    B1 -->|Unduhan Berkas (.pdf)| A1
+
+```
+
+### 11.2 Sequence Diagram: Proses Pembuatan Dokumen Legal
+
+```mermaid
+sequenceDiagram
+    actor Pengrajin
+    participant Antarmuka as Frontend (React)
+    participant Server as Backend (Express)
+    participant AI as Model Gemini (API)
+    participant Dokumen as PDF Generator
+    
+    Pengrajin->>Antarmuka: Unggah berkas gambar & sisipkan teks
+    Antarmuka->>Antarmuka: Validasi ukuran < 5MB
+    Antarmuka->>Server: Jalankan HTTP POST (Data Payload)
+    Server->>AI: Eksekusi mandat khusus + obyek Multimodal
+    AI-->>Server: Retur struktur JSON berisi legalitas
+    Server->>Dokumen: Transfer teks dan variabel identitas
+    Dokumen-->>Server: Hasilkan Stream Buffer PDF
+    Server-->>Antarmuka: Kirim respons 200 OK beserta obyek Blob
+    Antarmuka-->>Pengrajin: Otomatisasi unduhan berkas PDF
+
+```
+
+---
+
+## 12. Kelengkapan Diagram Sistem
+
+### 12.1 Use Case Diagram — Interaksi Pengguna & Sistem
+
+```mermaid
+graph TB
+    subgraph "Sistem Citraksa AI"
+        UC1[Unggah Foto Karya]
+        UC2[Input Deskripsi Naratif]
+        UC3[Analisis Multimodal AI]
+        UC4[Review Hasil Draf Teks]
+        UC5[Isi Identitas Pencipta]
+        UC6[Generate Dokumen PDF]
+        UC7[Manajemen System Prompt]
+        UC8[Monitoring Error & API Limit]
+    end
+
+    Pengrajin((Pengrajin / User)) --> UC1
+    Pengrajin --> UC2
+    Pengrajin --> UC4
+    Pengrajin --> UC5
+    Pengrajin --> UC6
+
+    Admin((Admin Sistem)) --> UC7
+    Admin --> UC8
+
+    %% Dependensi Sistem AI
+    UC1 -.-> UC3
+    UC2 -.-> UC3
+    UC3 -.-> UC4
+
+```
+
+### 12.2 Component Diagram — Modularitas Arsitektur
+
+```mermaid
+graph TB
+    subgraph "Citraksa Web App"
+        direction TB
+        
+        subgraph "Frontend Layer (React.js)"
+            C1[UI Modul Multimodal]
+            C2[Form Data Diri]
+            C3[PDF Previewer]
+        end
+
+        subgraph "Backend Layer (Express.js)"
+            C4[Router & Controller]
+            C5[Prompt Injection Module]
+            C6[PDF Generation Engine]
+        end
+
+        subgraph "Eksternal & AI Engine"
+            C7[Google AI Studio - Gemini 1.5]
+            C8[Google Cloud Run - Host]
+        end
+    end
+
+    %% Relasi Komponen
+    C1 --> C4
+    C2 --> C4
+    C4 --> C5
+    C5 --> C7
+    C7 --> C4
+    C4 --> C6
+    C6 --> C3
+    
+    C8 -.->|Hosting| Frontend Layer
+    C8 -.->|Hosting| Backend Layer
+
+```
+
+### 12.3 Activity Diagram — Alur Generator Dokumen HAKI
+
+```mermaid
+flowchart TD
+    Start([Pengrajin Membuka Aplikasi]) --> A[Klik Mulai Mendaftar]
+    A --> B[Upload Foto Motif & Kain]
+    
+    B --> C{Apakah Format Valid?}
+    C -->|Tidak (Bukan Gambar/Kebesaran)| D[Tampilkan Pesan Error]
+    D --> B
+    
+    C -->|Ya| E[Input Cerita Karya]
+    E --> F[Klik Proses Analisis]
+    
+    F --> G[Sistem Meracik Prompt]
+    G --> H[Kirim ke API Gemini AI]
+    
+    H --> I{Respons API Berhasil?}
+    I -->|Gagal/Timeout| J[Tampilkan Opsi Coba Lagi]
+    J --> F
+    
+    I -->|Berhasil| K[Tampilkan Hasil Narasi & Klausa Hukum]
+    K --> L{Apakah User Setuju dengan Hasil?}
+    
+    L -->|Tidak / Ingin Edit| M[Edit Teks Secara Manual]
+    M --> N
+    L -->|Setuju| N[Input Nama Lengkap, NIK, Alamat]
+    
+    N --> O[Generate Formulir PDF]
+    O --> P[Unduh File ke Perangkat]
+    
+    P --> Q[Bersihkan Cache & Session Data]
+    Q --> End([Selesai])
+
+```
+
+---
+
+## 13. Lampiran & Referensi
+
+* **Regulasi Rujukan:** Undang-Undang Republik Indonesia Nomor 28 Tahun 2014 tentang Hak Cipta.
+* **Standar Dokumen:** Format Formulir Pendaftaran Ciptaan dari Direktorat Jenderal Kekayaan Intelektual (DJKI) Kemenkumham RI.
+* **Dokumentasi API:** Google AI Studio Documentation (Gemini API).
+
+```
