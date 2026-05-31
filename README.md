@@ -81,7 +81,7 @@ cp .env.example .env
 Buka file `.env` baru tersebut, kemudian masukkan API Key Gemini Anda yang didapatkan dari [Google AI Studio](https://aistudio.google.com/):
 ```ini
 PORT=3001
-GEMINI_API_KEY=AQ.Ab8RN6KwkuZAdPoeZ... # API Key Anda di sini
+GEMINI_API_KEY=... # API Key Anda di sini
 ```
 
 Jalankan server backend:
